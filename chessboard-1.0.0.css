@@ -15,14 +15,16 @@
 
 .board-b72b1
 {
-  border: 2px solid #404040;
+  border: 2px solid #3a3d4a;
   box-sizing: content-box;
+  border-radius: 2px;
 }
 
 .square-55d63
 {
   float: left;
   position: relative;
+  transition-duration: 300ms;
 
   /* disable any native browser highlighting */
   -webkit-touch-callout: none;
@@ -48,7 +50,7 @@
 .highlight1-32417,
 .highlight2-9c5d2
 {
-  box-shadow: inset 0 0 3px 3px yellow;
+  box-shadow: inset 0 0 3px 3px var(--darkblue);
 }
 
 .notation-322f9
