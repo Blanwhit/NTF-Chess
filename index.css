@@ -1,0 +1,41 @@
+*
+{
+    box-sizing: border-box;
+}
+
+body
+{
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+.container
+{
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--darkblue);
+    color: var(--lightorange);
+}
+
+.board
+{
+    width: max(40vw, 40vh);
+}
+
+.main_board
+{
+    z-index: 9;
+    margin: auto;
+}
+
+.blur_board
+{
+    position: absolute;
+    filter: blur(20vw);
+    -webkit-filter: blur(20vw);
+    opacity: .6;
+}
