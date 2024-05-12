@@ -150,3 +150,24 @@ var config = {
 board = Chessboard( 'myBoard', config )
 
 updateStatus()
+
+//Help Button and modal
+var helpButton = document.getElementById( 'help' );
+var modal = document.getElementById( 'help-modal' );
+var span = document.getElementsByClassName("close")[0];
+
+helpButton.onclick = function ()
+{
+    modal.style.display = "block";
+}
+
+span.onclick = function() {
+    modal.style.display = "none";
+  }
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+  
