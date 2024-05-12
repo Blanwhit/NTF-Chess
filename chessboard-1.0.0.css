@@ -56,9 +56,9 @@
 .notation-322f9
 {
   cursor: default;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
+  font-size: calc(min(1vh, 1vw) * 2.5);
   position: absolute;
+  z-index: 0;
 }
 
 .alpha-d2270

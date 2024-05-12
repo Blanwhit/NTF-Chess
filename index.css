@@ -3,13 +3,13 @@ body
     padding: 0;
     width: 100vw;
     height: 100vh;
+    font-family: "Jacquard 24", sans-serif;
+    font-weight: 400;
+    font-style: normal;
 }
 
 .container
 {
-    font-family: "Jacquard 24", sans-serif;
-    font-weight: 400;
-    font-style: normal;
     height: 100vh;
     width: 100vw;
     display: flex;
@@ -22,7 +22,7 @@ body
 
 .board
 {
-    width: max(40vw, 40vh);
+    width: min(70vw, 70vh);
 }
 
 .main_board
@@ -61,5 +61,55 @@ body
 
 .piece-417db
 {
+    z-index: 99999;
+}
+
+.altruism_bar
+{
+    z-index: 99;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: calc(50vh - min(70vh, 70vw) / 2 - min(80vw, 80vh) * 0.15);
+    width: min(80vw, 80vh);
+}
+
+.help
+{
+    font-family: "Jacquard 24", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: calc(5*min(1vh, 1vw));
+    position: absolute;
+    background-color: #FF8A00;
+    border: calc(0.5 * min(1vh, 1vw)) solid black;
+    border-radius: min(1vw, 1vh);
+    bottom: calc(50vh - min(70vh, 70vw) / 2 - min(80vw, 80vh) * 0.15);
+    height: calc(7*min(1vw, 1vh));
+    padding-inline: 0.5em;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: 300ms;
+    cursor: pointer;
+}
+
+.help:hover
+{
+    background-color: #8d4b00;
+}
+
+b
+{
+    font-weight: 500;
+}
+
+.lightning
+{
+    position: absolute;
+    top: calc(50vh - min(70vh, 70vw) / 2 - min(80vw, 80vh) * 0.15);
+    height: calc(min(80vw, 80vh) * 0.13);
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 999;
+    transition: 1000ms;
 }

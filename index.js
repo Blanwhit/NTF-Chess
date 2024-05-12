@@ -15,6 +15,8 @@ function onDragStart ( source, piece, position, orientation )
     {
         return false
     }
+
+    document.body.style.cursor = "grabbing";
 }
 
 function onDrop ( source, target )
@@ -29,10 +31,11 @@ function onDrop ( source, target )
     // illegal move
     if ( move === null )
     {
+        document.body.style.cursor = "default";
         removeGreySquares()
         return 'snapback'
     }
-
+    document.body.style.cursor = "default";
     updateStatus()
     removeGreySquares()
 }
@@ -43,6 +46,7 @@ function onSnapEnd ()
 {
     removeGreySquares()
     board.position( game.fen() )
+    document.body.style.cursor = "default";
 }
 
 function updateStatus ()
@@ -118,6 +122,7 @@ function onMouseoverSquare ( square, piece )
 
     // highlight the square they moused over
     greySquare( square )
+    document.body.style.cursor = "grab";
 
     // highlight the possible squares for this piece
     for ( var i = 0; i < moves.length; i++ )
@@ -129,6 +134,7 @@ function onMouseoverSquare ( square, piece )
 function onMouseoutSquare ( square, piece )
 {
     removeGreySquares()
+    document.body.style.cursor = "default";
 }
 
 var config = {
