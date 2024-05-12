@@ -156,6 +156,7 @@ b
     float: right;
     font-size: 36px;
     font-weight: bold;
+    transition: 300ms;
 }
 
 .close:hover,
