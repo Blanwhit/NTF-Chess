@@ -74,28 +74,32 @@ body
     width: min(80vw, 80vh);
 }
 
-.help
+.btn
 {
     font-family: "Jacquard 24", sans-serif;
     font-weight: 400;
     font-style: normal;
     font-size: calc(5*min(1vh, 1vw));
-    position: absolute;
     background-color: #FF8A00;
     border: calc(0.5 * min(1vh, 1vw)) solid black;
     border-radius: min(1vw, 1vh);
-    bottom: calc(50vh - min(70vh, 70vw) / 2 - min(80vw, 80vh) * 0.15);
-    height: calc(7*min(1vw, 1vh));
     padding-inline: 0.5em;
-    left: 50%;
-    transform: translateX(-50%);
     transition: 300ms;
     cursor: pointer;
 }
 
-.help:hover
+.btn:hover
 {
     background-color: #8d4b00;
+}
+
+.help_btn
+{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(50vh - min(70vh, 70vw) / 2 - min(80vw, 80vh) * 0.15);
+    height: calc(7*min(1vw, 1vh));
 }
 
 b
@@ -184,4 +188,11 @@ b
 .text-hover
 {
     cursor: text;
+}
+
+.login_btn
+{
+    position: absolute;
+    right: 3vw;
+    top: 3vh
 }

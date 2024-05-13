@@ -135,3 +135,11 @@ table
     border-collapse: collapse;
     border-spacing: 0;
 }
+
+:root
+{
+    --darkblue: #12182A;
+    --lightblue: #bbccff;
+    --darkorange: #9d6136;
+    --lightorange: #ffcf8d;
+}

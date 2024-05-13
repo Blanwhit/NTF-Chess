@@ -1,0 +1,109 @@
+body
+{
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    font-family: "Jacquard 24", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    background-color: var(--darkblue);
+}
+
+.main_container
+{
+    margin: auto;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    background-color: #FF8A00;
+    border: calc(0.5 * min(1vh, 1vw)) solid black;
+    border-radius: min(1vw, 1vh);
+    padding-block: 5vh;
+    transition: 500ms;
+    box-shadow: 0 0 20vw rgba(255, 138, 0, .7);
+}
+
+.navbar
+{
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+}
+
+.nav-link
+{
+    text-justify: center;
+    width: 100%;
+    text-decoration: none;
+    color: black;
+    font-size: calc(10*min(1vh, 1vw));
+    font-weight: 600;
+    text-align: center;
+    margin-inline: 10vw;
+}
+
+.logout-link
+{
+    display: none;
+    position: absolute;
+}
+
+input
+{
+    font-family: "Jacquard 24", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 3vh;
+    margin-top: 5vh;
+    height: 5vh;
+    text-justify: center;
+    text-align: center;
+    border: calc(0.3 * min(1vh, 1vw)) solid black;
+    border-radius: calc(1 * min(1vh, 1vw));
+    background-color: var(--lightorange);
+    width: 40vw;
+}
+
+input:focus
+{
+    outline: none;
+}
+
+.mb-3
+{
+    display: flex;
+    justify-content: center;
+}
+
+.btn-primary
+{
+    background-color: var(--darkorange);
+    width: 30vw;
+    border: calc(0.3 * min(1vh, 1vw)) solid black;
+    border-radius: calc(1 * min(1vh, 1vw));
+    font-family: "Jacquard 24", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    font-size: 4vh;
+    margin-top: 5vh;
+    height: 5vh;
+}
+
+.alert
+{
+    background-color: #2F5A98;
+    font-size: 4vh;
+    width: 50vw;
+    text-justify: center;
+    text-align: center;
+    border: calc(0.3 * min(1vh, 1vw)) solid black;
+    border-radius: calc(1 * min(1vh, 1vw));
+    margin-top: 5vh;
+    height: 5vh;
+}

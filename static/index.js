@@ -152,7 +152,7 @@ board = Chessboard( 'myBoard', config )
 updateStatus()
 
 //Help Button and modal
-var helpButton = document.getElementById( 'help' );
+var helpButton = document.getElementById( 'help_btn' );
 var modal = document.getElementById( 'help-modal' );
 var span = document.getElementsByClassName( "close" )[ 0 ];
 
@@ -185,3 +185,10 @@ window.onclick = function ( event )
         }, 500 );
     }
 }
+
+loginBtn = document.getElementById( "login_btn" )
+
+loginBtn.onclick = () =>
+{
+    window.location = '/auth/login';
+} 
