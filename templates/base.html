@@ -26,8 +26,8 @@
                 <div class="collapse navbar-collapse" id="navbar">
 
                     <div class="navbar me-auto mt-2">
-                        <a class="nav-link" href="/auth/login">Login</a>
-                        <a class="nav-link" href="/auth/register">Register</a>
+                        <a class="nav-link login-button" href="/auth/login">Login</a>
+                        <a class="nav-link register-button" href="/auth/register">Register</a>
                     </div>
                     {% if session["user_id"] %}
                     <a class="logout-link" href="/auth/logout">Log Out</a>

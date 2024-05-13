@@ -53,9 +53,9 @@ def register():
             except db.IntegrityError:
                 error = f"User {username} is already registered, please login"
             else:
-                return redirect(url_for("auth.login"))
+                return redirect(url_for("auth.access"))
         flash(error)
-    return(render_template('auth/register.html'))
+    return render_template('auth/access.html')
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
@@ -80,7 +80,7 @@ def login():
 
         flash(error)
 
-    return render_template('auth/login.html')
+    return render_template('auth/access.html')
 
 @bp.route('/logout')
 def logout():

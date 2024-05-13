@@ -1,36 +1,32 @@
-var board = null
-var game = new Chess()
-var $status = $( '#status' )
-var $fen = $( '#fen' )
-var $pgn = $( '#pgn' )
+let board = null
+const game = new Chess()
+const $status = $('#status')
+const $fen = $('#fen')
+const $pgn = $('#pgn')
 
-function onDragStart ( source, piece, position, orientation )
-{
+function onDragStart(source, piece, position, orientation) {
     // do not pick up pieces if the game is over
-    if ( game.game_over() ) return false
+    if (game.game_over()) return false
 
     // only pick up pieces for the side to move
-    if ( ( game.turn() === 'w' && piece.search( /^b/ ) !== -1 ) ||
-        ( game.turn() === 'b' && piece.search( /^w/ ) !== -1 ) )
-    {
+    if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+        (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
         return false
     }
 
     document.body.style.cursor = "grabbing";
 }
 
-function onDrop ( source, target )
-{
+function onDrop(source, target) {
     // see if the move is legal
-    var move = game.move( {
+    const move = game.move({
         from: source,
         to: target,
         promotion: 'q' // NOTE: always promote to a queen for example simplicity
-    } )
+    })
 
     // illegal move
-    if ( move === null )
-    {
+    if (move === null) {
         document.body.style.cursor = "default";
         removeGreySquares()
         return 'snapback'
@@ -42,102 +38,89 @@ function onDrop ( source, target )
 
 // update the board position after the piece snap
 // for castling, en passant, pawn promotion
-function onSnapEnd ()
-{
+function onSnapEnd() {
     removeGreySquares()
-    board.position( game.fen() )
+    board.position(game.fen())
     document.body.style.cursor = "default";
 }
 
-function updateStatus ()
-{
-    var status = ''
+function updateStatus() {
+    let status = ''
 
-    var moveColor = 'White'
-    if ( game.turn() === 'b' )
-    {
+    let moveColor = 'White'
+    if (game.turn() === 'b') {
         moveColor = 'Black'
     }
 
     // checkmate?
-    if ( game.in_checkmate() )
-    {
+    if (game.in_checkmate()) {
         status = 'Game over, ' + moveColor + ' is in checkmate.'
     }
 
     // draw?
-    else if ( game.in_draw() )
-    {
+    else if (game.in_draw()) {
         status = 'Game over, drawn position'
     }
 
     // game still on
-    else
-    {
+    else {
         status = moveColor + ' to move'
 
         // check?
-        if ( game.in_check() )
-        {
+        if (game.in_check()) {
             status += ', ' + moveColor + ' is in check'
         }
     }
 
-    $status.html( status )
-    $fen.html( game.fen() )
-    $pgn.html( game.pgn() )
+    $status.html(status)
+    $fen.html(game.fen())
+    $pgn.html(game.pgn())
 }
 
-var whiteSquareGrey = '#bbccff'
-var blackSquareGrey = '#5c6580'
+const whiteSquareGrey = '#bbccff'
+const blackSquareGrey = '#5c6580'
 
-function removeGreySquares ()
-{
-    $( '#myBoard .square-55d63' ).css( 'background', '' )
+function removeGreySquares() {
+    $('#myBoard .square-55d63').css('background', '')
 }
 
-function greySquare ( square )
-{
-    var $square = $( '#myBoard .square-' + square )
+function greySquare(square) {
+    const $square = $('#myBoard .square-' + square)
 
-    var background = whiteSquareGrey
-    if ( $square.hasClass( 'black-3c85d' ) )
-    {
+    let background = whiteSquareGrey
+    if ($square.hasClass('black-3c85d')) {
         background = blackSquareGrey
     }
 
-    $square.css( 'background', background )
+    $square.css('background', background)
 }
 
-function onMouseoverSquare ( square, piece )
-{
+function onMouseoverSquare(square, piece) {
     // get list of possible moves for this square
-    var moves = game.moves( {
+    const moves = game.moves({
         square: square,
         verbose: true
-    } )
+    })
 
     // exit if there are no moves available for this square
-    if ( moves.length === 0 ) return
+    if (moves.length === 0) return
 
     // highlight the square they moused over
-    greySquare( square )
+    greySquare(square)
     document.body.style.cursor = "grab";
 
     // highlight the possible squares for this piece
-    for ( var i = 0; i < moves.length; i++ )
-    {
-        greySquare( moves[ i ].to )
+    for (let i = 0; i < moves.length; i++) {
+        greySquare(moves[i].to)
     }
 }
 
-function onMouseoutSquare ( square, piece )
-{
+function onMouseoutSquare(square, piece) {
     removeGreySquares()
     document.body.style.cursor = "default";
 }
 
-var config = {
+const config = {
     draggable: true,
     position: 'start',
     onDragStart: onDragStart,
@@ -147,48 +130,40 @@ var config = {
     onMouseoverSquare: onMouseoverSquare,
 }
 
-board = Chessboard( 'myBoard', config )
+board = Chessboard('myBoard', config)
 
 updateStatus()
 
 //Help Button and modal
-var helpButton = document.getElementById( 'help_btn' );
-var modal = document.getElementById( 'help-modal' );
-var span = document.getElementsByClassName( "close" )[ 0 ];
+const helpButton = document.getElementById('help_btn');
+const modal = document.getElementById('help-modal');
+const span = document.getElementsByClassName("close")[0];
 
-helpButton.onclick = function ()
-{
+helpButton.onclick = function () {
     modal.style.display = "block";
-    setTimeout( () =>
-    {
+    setTimeout(() => {
         modal.style.opacity = 1;
-    }, 1 );
+    }, 1);
 }
 
-span.onclick = function ()
-{
+span.onclick = function () {
     modal.style.opacity = 0;
-    setTimeout( () =>
-    {
+    setTimeout(() => {
         modal.style.display = "none";
-    }, 500 );
+    }, 500);
 }
 
-window.onclick = function ( event )
-{
-    if ( event.target == modal )
-    {
+window.onclick = function (event) {
+    if (event.target == modal) {
         modal.style.opacity = 0;
-        setTimeout( () =>
-        {
+        setTimeout(() => {
             modal.style.display = "none";
-        }, 500 );
+        }, 500);
     }
 }
 
-loginBtn = document.getElementById( "login_btn" )
+loginBtn = document.getElementById("login_btn")
 
-loginBtn.onclick = () =>
-{
+loginBtn.onclick = () => {
     window.location = '/auth/login';
 } 

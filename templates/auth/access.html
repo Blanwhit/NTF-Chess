@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}
+Access
+{% endblock %}
+
+{% block main %}
+
+
+<form action="/auth/login" method="post" class="login-form">
+    <div class="mb-3">
+        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username"
+            placeholder="Username" type="text">
+    </div>
+    <div class="mb-3">
+        <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password">
+    </div>
+    <div class="mb-3">
+        <button class="btn btn-primary" type="submit">Log In</button>
+    </div>
+</form>
+
+<form action="/auth/register" method="post" class="register-form" style="display: none;">
+    <div class="mb-3">
+        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="username" placeholder="Username"
+            type="text">
+    </div>
+    <div class="mb-3">
+        <input class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password">
+    </div>
+    <div class="mb-3">
+        <input class="form-control mx-auto w-auto" name="confirmation" placeholder="Password confirmation"
+            type="password">
+    </div>
+    <div class="mb-3">
+        <button class="btn btn-primary" type="submit">Register</button>
+    </div>
+</form>
+
+<script>
+    const registerForm = document.querySelector('.register-form');
+    const loginForm = document.querySelector('.login-form');
+
+    document.querySelector('.login-button').addEventListener("click", e => {
+        e.preventDefault();
+        registerForm.style.display = "none";
+        loginForm.style.display = "block";
+
+    });
+    document.querySelector('.register-button').addEventListener("click", e => {
+        e.preventDefault();
+        registerForm.style.display = "block";
+        loginForm.style.display = "none";
+
+    });
+
+</script>
+{% endblock %}
