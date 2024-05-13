@@ -196,3 +196,7 @@ b
     right: 3vw;
     top: 3vh
 }
+
+.subtle-link {
+    color: inherit;
+}
