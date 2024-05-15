@@ -1,8 +1,10 @@
 import os
 
 from flask import Flask
+from flask_socketio import SocketIO
 
-
+socketio = SocketIO()
+games = []
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -10,7 +12,7 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'Chess.sqlite'),
     )
-
+    socketio.init_app(app)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -38,8 +40,10 @@ def create_app(test_config=None):
 
     from . import chess
     app.register_blueprint(chess.bp)
-
+    
     @app.route('/')
     def index():
         return redirect(url_for('chess.index'))
+    
+    
     return app
