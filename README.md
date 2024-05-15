@@ -1,4 +1,17 @@
 **| NTF CHESS |**
+**Run Project**
+
+NTF chess requires Python 3 to run (I used 3.10 but later/nearby versions are compatible), and the Flask module must also be installed.
+
+Use the command
+```
+flask --app . init-db
+```
+to initialise the database, and then run 
+```
+flask --app . run --debug
+```
+to launch the server.
 
 **How to Play:**
 
