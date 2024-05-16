@@ -8,4 +8,4 @@ COPY . .
 
 EXPOSE 1337
 
-CMD ["flask", "--app", ".", "run"]
+CMD ["python3", "-m", "flask", "--app", ".", "run"]
