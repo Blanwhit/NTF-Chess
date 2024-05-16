@@ -8,4 +8,5 @@ COPY . .
 
 EXPOSE 1337
 
+CMD ["python3", "-m", "flask", "--app", ".", "init-db"]
 CMD ["python3", "-m", "flask", "--app", ".", "run"]
