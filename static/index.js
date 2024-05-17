@@ -162,8 +162,11 @@ window.onclick = function (event) {
     }
 }
 
-loginBtn = document.getElementById("login_btn")
+const modeBtn = document.getElementById("mode_btn");
 
-loginBtn.onclick = () => {
-    window.location = '/auth/login';
-} 
+modeBtn.onclick = () => {
+  const currentUrl = window.location.href;
+  // Index into the opposite page
+  const newUrl = currentUrl.includes('/multiplayer') ? '/' : '/multiplayer';
+  window.location = newUrl;
+};

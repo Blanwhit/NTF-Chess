@@ -25,7 +25,7 @@
     <img src="{{ url_for('static', filename='img/lightning.png') }}" class="lightning" id="lightning">
     <button class="help_btn btn" id="help_btn"><b>?</b> How to Play</button>
     <button class="login_btn btn" id="login_btn">Log In</button>
-    <button class="multiplayer_btn btn" id="mode_btn">Multiplayer</button>
+    <button class="multiplayer_btn btn" id="mode_btn">Singleplayer</button>
 
     <div id="help-modal" class="modal">
         <div class="modal-content">
@@ -60,17 +60,17 @@
     <script src="{{ url_for('static', filename='index.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
-        // var socket = io();
-        // var roomName = prompt('Enter a room name:');
-        // console.log(socket.emit('join_game', { room: roomName}))
+        var socket = io();
+        var roomName = prompt('Enter a room name:');
+        console.log(socket.emit('join_game', { room: roomName}))
 
-        // socket.on('player_joined', function(data) {
-        //     console.log('Player joined:', data);
-        // });
+        socket.on('player_joined', function(data) {
+            console.log('Player joined:', data);
+        });
 
-        // socket.on('connect', function() {
-        //     socket.emit('message', { message:'I\'m connected!'});
-        // });
+        socket.on('connect', function() {
+            socket.emit('message', { message:'I\'m connected!'});
+        });
     </script>
 </body>
 

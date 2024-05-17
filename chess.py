@@ -14,10 +14,10 @@ def index():
     return render_template('/index.html')
 
 
-@bp.route('/')
+@bp.route('/multiplayer')
 @login_required
 def multiplayer():
-    return render_template('/index.html')
+    return render_template('/multiplayer.html')
 
 '''@socketio.on('message')
 def handle_message(data):

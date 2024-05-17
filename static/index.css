@@ -102,6 +102,7 @@ body
     height: calc(7*min(1vw, 1vh));
 }
 
+
 b
 {
     font-weight: 500;
@@ -194,6 +195,13 @@ b
 {
     position: absolute;
     right: 3vw;
+    top: 3vh
+}
+
+.multiplayer_btn
+{
+    position: absolute;
+    right: 12vw;
     top: 3vh
 }
 
