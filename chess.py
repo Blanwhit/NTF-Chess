@@ -1,9 +1,12 @@
-from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, session
-)
+from random import choices
+from string import ascii_uppercase
+
+from flask import (Blueprint, flash, g, redirect, render_template, request,
+                   session, url_for)
+from flask_socketio import SocketIO, emit, join_room, leave_room, send
 from werkzeug.exceptions import abort
-from flask_socketio import SocketIO, join_room, leave_room, send, emit
-from . import socketio, games
+
+from . import games, socketio
 from .auth import login_required
 from .db import get_db
 
@@ -32,36 +35,34 @@ def handle_join_game(data):
 
     room = data.get('room')
     matches = []
-    create = 0
+    create = False
 
     # Looks to join available room if none specified, or if there are no open rooms, it creates a new randomly named one
     if not room:
         # Look for currently open rooms to join and store
-        matches = [game for game in games if len(game['room']['players'] < 2)]
+        matches = [game for game in games if len(game['room']['players']) < 2]
 
         # If no available matches create a new room
-        if len(matches) == 0:
-            from random import choice
-            from string import ascii_uppercase
-            room = ''.join(choice(ascii_uppercase) for i in range(10))
+        if not matches:
+            room = ''.join(choices(ascii_uppercase, k=10))
             matches.append({'room': room, 'players': []})
-            create = 1
+            create = True
     else:
         # Check if the specified room already exists, else create a room
         matches = [game for game in games if game['room'] == room]
-        if len(matches) == 0:
+        if not matches:
             matches.append({'room': room, 'players': []})
-            create = 1
+            create = True
 
     print(matches)
 
     game = matches[0]
-    if create == 1:
+    if create:
         games.append(game)
 
     # Else check if room is already full
     if len(game['players']) == 2:
-        emit('player_joined' "Game is already full, please try join another room")
+        emit('player_joined', "Game is already full, please try join another room")
 
     # Else if room add the user to the existing game
     else:
@@ -71,7 +72,7 @@ def handle_join_game(data):
             emit('player_joined', f"You are already in the game '{ room }'")
         else:
             game['players'].append(user_id)
-            emit('player_joined', "You joined the game '{}'".format(room))
+            emit('player_joined', f"You joined the game '{room}'")
 
         emit('player_joined', game, room=game['room'])
     print(game)
