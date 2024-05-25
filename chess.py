@@ -1,4 +1,4 @@
-from random import choices
+from random import choices, choice
 from string import ascii_uppercase
 
 from flask import (Blueprint, flash, g, redirect, render_template, request,
@@ -26,21 +26,16 @@ def multiplayer():
 def handle_message(data):
     print('received message: ', session['username'])'''
 
-# Room joining logic for games
-@socketio.on('join_game')
-def handle_join_game(data):
-    user_id = session.get('user_id')
-    if not user_id:
-        return "User not authenticated"
 
-    room = data.get('room')
+
+def get_game(room):
     matches = []
     create = False
 
     # Looks to join available room if none specified, or if there are no open rooms, it creates a new randomly named one
     if not room:
         # Look for currently open rooms to join and store
-        matches = [game for game in games if len(game['room']['players']) < 2]
+        matches = [game for game in games if len(game['players']) < 2]
 
         # If no available matches create a new room
         if not matches:
@@ -51,43 +46,80 @@ def handle_join_game(data):
         # Check if the specified room already exists, else create a room
         matches = [game for game in games if game['room'] == room]
         if not matches:
-            matches.append({'room': room, 'players': []})
+            matches.append({'room': room,
+                            'players': [],
+                            'game': {'status': 'White to move',
+                                'board': 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'},
+                            'gameStarted': False})
             create = True
 
-    print(matches)
-
     game = matches[0]
+    print(game)
     if create:
         games.append(game)
+    return game
 
-    # Else check if room is already full
-    if len(game['players']) == 2:
+
+
+# Room joining logic for games
+@socketio.on('join_game')
+def handle_join_game(data):
+    user_id = session.get('user_id')
+    if not user_id:
+        return "User not authenticated"
+    room = data.get('room')
+    game = get_game(room)
+
+    # Check if not in game and game already is full
+    if user_id not in game['players'] and len(game['players']) == 2:
         emit('player_joined', "Game is already full, please try join another room")
 
-    # Else if room add the user to the existing game
+    # Else add the user to the game
     else:
         join_room(game['room'])
-        # If already in game, notify the player and add to list
+
+        # If already in game, notify the player and rejoin the connection
         if user_id in game['players']:
             emit('player_joined', f"You are already in the game '{ room }'")
+
+        # Else add the player to the match
         else:
             game['players'].append(user_id)
             emit('player_joined', f"You joined the game '{room}'")
+            
+            # If game now full, start the game 
+            if len(game['players']) == 2:
+                game['gameStarted'] = True
+                # Assign players
+                game['white'] = choice(game['players'])
+                emit('game_started', room=game['room'])
 
-        emit('joined_match', game)
-        emit('player_joined', game, room=game['room'])
-    print(game)
+        emit('joined_match', {'game': game, 'user_id': user_id})
+
+        emit('player_joined', room=game['room'])
+    print(games)
 
 
 # Room joining logic for games
 @socketio.on('make_move')
 def handle_move(data, room):
+    user_id = session.get('user_id')
     status = data.get('status')
     board = data.get('board')
-    print(data, room)
+    
 
-    # Emit the updated game state to all players in the room
-    emit('game_update', {
-        'status': status,
-        'board': board
-    }, room=room)
+    matches = [game for game in games if game['room'] == room]
+    if not matches or not (user_id in matches[0]['players']):
+        return
+    match = matches[0]
+    
+    if not match['gameStarted']:
+        return
+    # Ensures the right player is moving 
+    if ((match['game']['status'] == 'White to move' and user_id == match['white']) or 
+        (match['game']['status'] == 'Black to move' and user_id != match['white'])):
+        # Update board on server
+        match['game'] = {'status': status, 'board': board}
+        print(data, match)
+        # Emit the updated game state to all players in the room
+        emit('game_update', match['game'], room=room)
