@@ -1,14 +1,14 @@
 let board = null
 const game = new Chess()
 let gameDat = {}
-let id = 0
+var id = 0
 const $status = $('#status')
 const $fen = $('#fen')
 const $pgn = $('#pgn')
 const modeBtn = document.getElementById("mode_btn");
 isMultiplayer = window.location.href.includes('/multiplayer')
 
-
+try {
 if (isMultiplayer) {
     var socket = io();
     var roomName = prompt('Enter a room name:');
@@ -16,19 +16,45 @@ if (isMultiplayer) {
 
     socket.on('player_joined', function(data) {
         console.log('Player joined:', data);
+        gameDat = data
+        if (gameDat && gameDat['game']) {
+        var fen = gameDat['game']['board'];
+        // A lot redundancy here as the same lines are repeated for singleplayer and join game config below,
+        // because I can't figure out how to force board updates otherwise but I may clean this up with promises later
+        const config = {
+            draggable: true,
+            position: fen,
+            onDragStart: onDragStart,
+            onDrop: onDrop,
+            onSnapEnd: onSnapEnd,
+            onMouseoutSquare: onMouseoutSquare,
+            onMouseoverSquare: onMouseoverSquare,
+        }
+        
+        board = Chessboard('myBoard', config)
+             
+        // Update the status display
+        $status.html(data['game']['status']);
+        board.orientation(gameDat['white'] == id ? 'white' : 'black')
+        // Update the chessboard position
+        game.load(fen);
+        board.position(fen);
+        $fen.html(board)}
     });
 
     socket.on('joined_match', function(data) {
         roomName = data['game']['room'];
         gameDat = data['game']
         id = data['user_id']
-        console.log(gameDat)
-        const fen = gameDat['game']['board'];
+        console.log(data)
+        console.log(gameDat['game']['board'])
+        if (gameDat && gameDat['game']) { var fen = gameDat['game']['board']
+        console.log(fen)
         
         // Slight redundancy here as the same lines are repeated for singleplayer config below, but I may clean this up with promises later
         const config = {
             draggable: true,
-            position: gameDat['game']['board'],
+            position: fen,
             onDragStart: onDragStart,
             onDrop: onDrop,
             onSnapEnd: onSnapEnd,
@@ -45,7 +71,7 @@ if (isMultiplayer) {
         game.load(fen);
         board.position(fen);
         board.orientation(gameDat['white'] == id ? 'white' : 'black')
-        $fen.html(board)
+        $fen.html(board)}
     })
 
     socket.on('connect', function() {
@@ -65,7 +91,8 @@ if (isMultiplayer) {
         board.position(fen);
         $fen.html(board)
     });
-}
+}}
+catch(err) { console.log(err) }
 
 function onDragStart(source, piece, position, orientation) {
     // do not pick up pieces if the game is over
@@ -203,7 +230,8 @@ function onMouseoutSquare(square, piece) {
 
 const config = {
     draggable: true,
-    position: isMultiplayer ? gameDat['game']['board'] : 'start',
+    position: isMultiplayer && (gameDat && gameDat['game']) ? gameDat['game']['board'] : 'start',
+    orientation : gameDat['white'] == id ? 'white' : 'black',
     onDragStart: onDragStart,
     onDrop: onDrop,
     onSnapEnd: onSnapEnd,
@@ -244,9 +272,9 @@ window.onclick = function (event) {
 }
 
 modeBtn.onclick = () => {
-  const currentUrl = window.location.href;
   // Index into the opposite page
-  const newUrl = currentUrl.includes('/multiplayer') ? '/' : '/multiplayer';
+  console.log
+  const newUrl = isMultiplayer ? '/' : '/multiplayer';
   window.location = newUrl;
 };
 

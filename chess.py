@@ -28,19 +28,23 @@ def handle_message(data):
 
 
 
-def get_game(room):
+def get_game(room, user_id):
     matches = []
     create = False
 
     # Looks to join available room if none specified, or if there are no open rooms, it creates a new randomly named one
-    if not room:
+    if room == "":
         # Look for currently open rooms to join and store
-        matches = [game for game in games if len(game['players']) < 2]
+        matches = [game for game in games if (len(game['players']) < 2 or user_id in game['players'])]
 
         # If no available matches create a new room
         if not matches:
             room = ''.join(choices(ascii_uppercase, k=10))
-            matches.append({'room': room, 'players': []})
+            matches.append({'room': room,
+                            'players': [],
+                            'game': {'status': 'White to move',
+                                'board': 'start'},
+                            'gameStarted': False})
             create = True
     else:
         # Check if the specified room already exists, else create a room
@@ -49,14 +53,15 @@ def get_game(room):
             matches.append({'room': room,
                             'players': [],
                             'game': {'status': 'White to move',
-                                'board': 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'},
+                                'board': 'start'},
                             'gameStarted': False})
             create = True
 
     game = matches[0]
-    print(game)
+    #print(game)
     if create:
         games.append(game)
+        game = games[-1]
     return game
 
 
@@ -68,7 +73,7 @@ def handle_join_game(data):
     if not user_id:
         return "User not authenticated"
     room = data.get('room')
-    game = get_game(room)
+    game = get_game(room, user_id)
 
     # Check if not in game and game already is full
     if user_id not in game['players'] and len(game['players']) == 2:
@@ -80,12 +85,12 @@ def handle_join_game(data):
 
         # If already in game, notify the player and rejoin the connection
         if user_id in game['players']:
-            emit('player_joined', f"You are already in the game '{ room }'")
+            emit('player_joined', f"You are already in the game '{ game['room'] }'")
 
         # Else add the player to the match
         else:
             game['players'].append(user_id)
-            emit('player_joined', f"You joined the game '{room}'")
+            emit('player_joined', f"You joined the game '{game['room']}'")
             
             # If game now full, start the game 
             if len(game['players']) == 2:
@@ -96,7 +101,7 @@ def handle_join_game(data):
 
         emit('joined_match', {'game': game, 'user_id': user_id})
 
-        emit('player_joined', room=game['room'])
+        emit('player_joined', game, room=game['room'])
     print(games)
 
 
