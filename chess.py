@@ -73,5 +73,20 @@ def handle_join_game(data):
             game['players'].append(user_id)
             emit('player_joined', "You joined the game '{}'".format(room))
 
+        emit('joined_match', game)
         emit('player_joined', game, room=game['room'])
     print(game)
+
+
+# Room joining logic for games
+@socketio.on('make_move')
+def handle_move(data, room):
+    status = data.get('status')
+    board = data.get('board')
+    print(data, room)
+
+    # Emit the updated game state to all players in the room
+    emit('game_update', {
+        'status': status,
+        'board': board
+    }, room=room)

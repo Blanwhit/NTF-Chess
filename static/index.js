@@ -3,6 +3,37 @@ const game = new Chess()
 const $status = $('#status')
 const $fen = $('#fen')
 const $pgn = $('#pgn')
+const modeBtn = document.getElementById("mode_btn");
+
+
+if (window.location.href.includes('/multiplayer')) {
+    var socket = io();
+    var roomName = prompt('Enter a room name:');
+    console.log(socket.emit('join_game', { room: roomName}))
+
+    socket.on('player_joined', function(data) {
+        console.log('Player joined:', data);
+    });
+    socket.on('joined_match', function(data) {
+        roomName = data['room'];
+    })
+
+    socket.on('connect', function() {
+        socket.emit('message', { message:'I\'m connected!'});
+    });
+    socket.on('game_update', function(data) {
+        const status = data.status;
+        const fen = data.board;
+        console.log(status, board)
+    
+        // Update the status display
+        $status.html(status);
+        // Update the chessboard position
+        game.load(fen);
+        board.position(fen);
+        $fen.html(board)
+    });
+}
 
 function onDragStart(source, piece, position, orientation) {
     // do not pick up pieces if the game is over
@@ -75,6 +106,9 @@ function updateStatus() {
     $status.html(status)
     $fen.html(game.fen())
     $pgn.html(game.pgn())
+    if (window.location.href.includes('/multiplayer')) {
+        socket.emit('make_move', { status: status, board: game.fen() }, room=roomName)
+        console.log(status, game.pgn())}
 }
 
 const whiteSquareGrey = '#bbccff'
@@ -162,11 +196,10 @@ window.onclick = function (event) {
     }
 }
 
-const modeBtn = document.getElementById("mode_btn");
-
 modeBtn.onclick = () => {
   const currentUrl = window.location.href;
   // Index into the opposite page
   const newUrl = currentUrl.includes('/multiplayer') ? '/' : '/multiplayer';
   window.location = newUrl;
 };
+
