@@ -6,9 +6,10 @@ const $status = $('#status')
 const $fen = $('#fen')
 const $pgn = $('#pgn')
 const modeBtn = document.getElementById("mode_btn");
+isMultiplayer = window.location.href.includes('/multiplayer')
 
 
-if (window.location.href.includes('/multiplayer')) {
+if (isMultiplayer) {
     var socket = io();
     var roomName = prompt('Enter a room name:');
     console.log(socket.emit('join_game', { room: roomName}))
@@ -22,6 +23,7 @@ if (window.location.href.includes('/multiplayer')) {
         gameDat = data['game']
         id = data['user_id']
         console.log(gameDat)
+        const fen = gameDat['game']['board'];
         
         // Slight redundancy here as the same lines are repeated for singleplayer config below, but I may clean this up with promises later
         const config = {
@@ -35,16 +37,14 @@ if (window.location.href.includes('/multiplayer')) {
         }
         
         board = Chessboard('myBoard', config)
-        //updateStatus()
-                
+             
         // Update the status display
         $status.html(data['game']['status']);
 
         // Update the chessboard position
-        game.load(data['game']['board'].split(" ")[0]);
-        board.position(data['game']['board']);
-        console.log('up', data['white'], data['white'] == id ? 'white' : 'black')
-        board.orientation(data['white'] == id ? 'white' : 'black')
+        game.load(fen);
+        board.position(fen);
+        board.orientation(gameDat['white'] == id ? 'white' : 'black')
         $fen.html(board)
     })
 
@@ -95,9 +95,9 @@ function onDrop(source, target) {
         return 'snapback'
     }
     
-    // For future temporary move functionality
+    // Note to add temporary move functionality in the future
     // Check if it's the player's turn
-    /*if (window.location.href.includes('/multiplayer')) {
+    if (isMultiplayer) {
         const isPlayerTurn =
             (gameDat['game']['status'] == 'White to move' && id == gameDat['white']) ||
             (gameDat['game']['status'] == 'Black to move' && id != gameDat['white']);
@@ -106,9 +106,9 @@ function onDrop(source, target) {
             removeGreySquares()
             return 'snapback'
         }
-        // If not the player's turn, grey out the board
-        //if (!isPlayerTurn) { greyOutBoard(); }
-    }*/
+        // If not the player's turn, redden the board
+        //if (!isPlayerTurn) { reddenBoard(); }
+    }
 
     document.body.style.cursor = "default";
     updateStatus()
@@ -153,7 +153,7 @@ function updateStatus() {
     $status.html(status)
     $fen.html(game.fen())
     $pgn.html(game.pgn())
-    if (window.location.href.includes('/multiplayer')) {
+    if (isMultiplayer) {
         socket.emit('make_move', { status: status, board: game.fen() }, room=roomName)
         console.log(status, game.pgn())}
 }
@@ -203,7 +203,7 @@ function onMouseoutSquare(square, piece) {
 
 const config = {
     draggable: true,
-    position: 'start',
+    position: isMultiplayer ? gameDat['game']['board'] : 'start',
     onDragStart: onDragStart,
     onDrop: onDrop,
     onSnapEnd: onSnapEnd,
