@@ -10,5 +10,7 @@ RUN pip install -r requirements.txt
 COPY . .
 
 EXPOSE 5000
- 
+
+RUN flask --app webapp init-db
+
 CMD ["python", "main.py" ] 
