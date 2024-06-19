@@ -70,7 +70,7 @@ body
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    top: calc(50vh - min(70vh, 70vw) / 2 - min(80vw, 80vh) * 0.15);
+    top: calc(50vh - min(70vw, 70vh) / 2 - min(80vw, 80vh) * 0.15);
     width: min(80vw, 80vh);
 }
 
@@ -86,6 +86,8 @@ body
     padding-inline: 0.5em;
     transition: 300ms;
     cursor: pointer;
+    width: 30vw;
+    height: calc(7*min(1vw, 1vh));
 }
 
 .btn:hover
@@ -96,10 +98,8 @@ body
 .help_btn
 {
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: calc(50vh - min(70vh, 70vw) / 2 - min(80vw, 80vh) * 0.15);
-    height: calc(7*min(1vw, 1vh));
+    left: 36vw;
+    bottom: calc(50vh - min(70vw, 70vh) / 2 - min(80vw, 80vh) * 0.15);
 }
 
 
@@ -194,17 +194,55 @@ b
 .login_btn
 {
     position: absolute;
-    right: 3vw;
-    top: 3vh
+    left: 3vw;
+    bottom: calc(50vh - min(70vw, 70vh) / 2 - min(80vw, 80vh) * 0.15);
 }
 
 .multiplayer_btn
 {
     position: absolute;
-    right: 12vw;
-    top: 3vh
+    left: 69vw;
+    bottom: calc(50vh - min(70vw, 70vh) / 2 - min(80vw, 80vh) * 0.15);
 }
 
-.subtle-link {
+.subtle-link
+{
     color: inherit;
+}
+
+@media screen and (orientation:portrait)
+{
+    .btn
+    {
+        width: 80vw;
+        left: 10vw;
+        height: max(7vw, 5vh);
+    }
+
+    .multiplayer_btn
+    {
+        bottom: 3vh;
+    }
+
+    .help_btn
+    {
+        bottom: calc(10vh + 2vw);
+    }
+
+    .login_btn
+    {
+        bottom: calc(17vh + 4vw);
+    }
+
+    .board
+    {
+        margin-bottom: 20vh;
+        width: min(50vh, 70vw);
+    }
+
+    .lightning,
+    .altruism_bar
+    {
+        top: 5vh;
+    }
 }
