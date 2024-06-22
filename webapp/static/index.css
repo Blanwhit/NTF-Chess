@@ -23,6 +23,7 @@ body
 .board
 {
     width: min(70vw, 70vh);
+    height: min(70vw, 70vh);
 }
 
 .main_board
@@ -48,14 +49,14 @@ body
 .blur_board_l2
 {
     filter: blur(10vw);
-    -webkit-filter: blur(5vw);
+    -webkit-filter: blur(10vw);
     z-index: 1;
 }
 
 .blur_board_l3
 {
     filter: blur(3vw);
-    -webkit-filter: blur(1vw);
+    -webkit-filter: blur(3vw);
     z-index: 2;
 }
 
@@ -208,6 +209,34 @@ b
 .subtle-link
 {
     color: inherit;
+}
+
+.darken_board
+{
+    z-index: 99999;
+    background-color: rgba(8, 11, 19, 0.6);
+    box-shadow: 0 0 20vw rgba(8, 11, 19, 0.6);
+    opacity: 0;
+    display: none;
+    transition: 500ms;
+}
+
+.game-over-heading-container
+{
+    text-align: center;
+    margin-top: 50%;
+    transform: translateY(-50%);
+    padding-inline: 5%;
+}
+
+.game-over-heading
+{
+    font-size: calc(10*min(1vh, 1vw));
+}
+
+.game-over-subheading
+{
+    font-size: calc(5*min(1vh, 1vw));
 }
 
 @media screen and (orientation:portrait)
