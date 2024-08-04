@@ -12,13 +12,13 @@ from .db import get_db
 
 bp = Blueprint('chess', __name__)
 @bp.route('/', methods=('GET', 'POST'))
-@login_required
+# @login_required
 def index():
     return render_template('/index.html')
 
 
 @bp.route('/multiplayer')
-@login_required
+# @login_required
 def multiplayer():
     return render_template('/multiplayer.html')
 

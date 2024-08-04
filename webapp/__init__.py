@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, redirect
 from flask_socketio import SocketIO
 
 socketio = SocketIO()

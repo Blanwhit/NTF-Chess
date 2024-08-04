@@ -494,3 +494,6 @@ modeBtn.onclick = () =>
     window.location = newUrl;
 };
 
+document.getElementById('login_btn').onclick = function() {
+    window.location.href = "/auth/login"
+}
