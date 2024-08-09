@@ -4,6 +4,8 @@ let board = null
 const game = new Chess()
 let altruism_score = 0
 let gameDat = {}
+let socket = null
+let roomName = ""
 var id = 0
 const $status = $( "#status" )
 const $fen = $( "#fen" )
@@ -17,80 +19,44 @@ var isMultiplayer = window.location.href.includes( "/multiplayer" )
 
 try
 {
-    if ( isMultiplayer )
-    {
-        var socket = io();
-        var roomName = prompt( "Enter a room name:" );
-        console.log( socket.emit( "join_game", { room: roomName } ) )
-
-        socket.on( "player_joined", function ( data )
-        {
-            console.log( "Player joined:", data );
-            gameDat = data
-            if ( gameDat && gameDat[ "game" ] )
-            {
-                var fen = gameDat[ "game" ][ "board" ];
-                // A lot redundancy here as the same lines are repeated for singleplayer and join game config below,
-                // because I can"t figure out how to force board updates otherwise but I may clean this up with promises later
-                initializeBoard()
-
-                // Update the status display
-                $status.html( data[ "game" ][ "status" ] );
-                board.orientation( gameDat[ "white" ] == id ? "white" : "black" )
-                // Update the chessboard position
-                game.load( fen );
-                board.position( fen );
-                $fen.html( board )
-            }
-        } );
-
-        socket.on( "joined_match", function ( data )
-        {
-            roomName = data[ "game" ][ "room" ];
-            gameDat = data[ "game" ]
-            id = data[ "user_id" ]
-            console.log( data )
-            console.log( gameDat[ "game" ][ "board" ] )
-            if ( gameDat && gameDat[ "game" ] )
-            {
-                var fen = gameDat[ "game" ][ "board" ]
-                console.log( fen )
-
-                initializeBoard()
-
-                // Update the status display
-                $status.html( data[ "game" ][ "status" ] );
-
-                // Update the chessboard position
-                game.load( fen );
-                board.position( fen );
-                board.orientation( gameDat[ "white" ] == id ? "white" : "black" )
-                $fen.html( board )
-            }
-        } )
-
-        socket.on( "connect", function ()
-        {
-            socket.emit( "message", { message: "I\"m connected!" } );
-        } );
-
-        socket.on( "game_update", function ( data )
-        {
-            gameDat[ "game" ] = data
-            const status = gameDat[ "game" ][ "status" ];
-            const fen = gameDat[ "game" ][ "board" ];
-            console.log( status, board )
-
-            // Update the status display
-            $status.html( status );
-            // Update the chessboard position
-            game.load( fen );
-            board.position( fen );
-            $fen.html( board )
-        } );
-    }
+    if (isMultiplayer) { initializeMultiplayer() }
+    else { initializeBoard(); }
 }
 catch ( err ) { console.log( err ) }
+
+function initializeMultiplayer() {
+    socket = io();
+    roomName = prompt("Enter a room name:");
+    socket.emit("join_game", { room: roomName });
+
+    socket.on("player_joined", (data) => updateGame(data));
+    socket.on("joined_match", (data) => updateGame(data, true));
+    socket.on("connect", () => socket.emit("message", { message: "I'm connected!" }));
+    socket.on("game_update", (data) => updateGame(data, false, true));
+}
+
+function updateGame(data, existingMatch = false, update = false) {
+    console.log("Game update:", data);
+    roomName = existingMatch ? data["game"]["room"] : roomName;
+    if (!update) { gameDat = existingMatch ? data["game"] : data; }
+    else { gameDat["game"] = data }
+
+    id = existingMatch ? data["user_id"] : id;
+
+    if (gameDat && gameDat[ "game" ])
+    {
+        const fen = gameDat["game"]["board"]; 
+        const orientation = (gameDat["white"] === id) ? "white" : "black";
+        if (!update) { 
+            initializeBoard();
+            board.orientation(orientation);
+        }
+        game.load(fen);
+        board.position(fen);
+        $status.html(gameDat["game"]["status"]);
+        $fen.html(board);
+    }
+}
 
 function onDragStart ( source, piece, position, orientation )
 {
@@ -336,23 +302,6 @@ function onMouseoutSquare ( square, piece )
     removeGreySquares()
     document.body.style.cursor = "default";
 }
-
-/*const config = {
-    draggable: true,
-    position: isMultiplayer && ( gameDat && gameDat[ "game" ] ) ? gameDat[ "game" ][ "board" ] : "start",
-    orientation: gameDat[ "white" ] == id ? "white" : "black",
-    onDragStart: onDragStart,
-    onDrop: onDrop,
-    onSnapEnd: onSnapEnd,
-    onMouseoutSquare: onMouseoutSquare,
-    onMouseoverSquare: onMouseoverSquare,
-}
-
-board = Chessboard( "myBoard", config )
-
-updateStatus()*/
-
-initializeBoard()
 
 function initializeBoard() {
     const config = getConfig(gameDat?.game?.board || "start", gameDat?.white == id ? "white" : "black");
