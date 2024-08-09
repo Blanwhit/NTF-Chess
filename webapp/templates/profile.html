@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/NTF Chess Logo.png') }}">
+    <title>NTF Chess</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='reset.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jacquard+24&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+
+</head>
+
+<body>
+    <h1 class="profile-heading">Profile</h1>
+    <div class="profile-container">
+        <div class="nickname-container">
+            <input type="text" class="nickname-input input" id="nickname-input" placeholder="{{ data[nickname] }}">
+            <button class=" save-btn btn" id="nickname-save-btn">Save</button>
+        </div>
+        <div class="stats-container">
+            <p class="username"><b>Username: </b><span id="username">{{ data[username] }}</span>.</p>
+            <p class="member-since"><b>Member Since: </b><span id="member-since">{{ data[memberSince] }}</span>.</p>
+            <p class="elo"><b>Elo: </b><span id="elo">{{ data[elo] }}</span></p>
+        </div>
+    </div>
+
+</html>
+
+</body>
+
+</html>

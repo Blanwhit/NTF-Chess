@@ -1,0 +1,60 @@
+body
+{
+    background: var(--darkblue);
+    color: var(--lightorange);
+}
+
+.profile-heading
+{
+    font-size: calc(10*min(1vh, 1vw));
+    text-align: center;
+}
+
+.save-btn
+{
+    max-height: calc(7*min(1vw, 1vh));
+    width: 12vw;
+    padding: 0;
+}
+
+.input
+{
+    padding: 0;
+    font-size: calc(5*min(1vh, 1vw));
+    background-color: #FF8A00;
+    border: calc(0.5 * min(1vh, 1vw)) solid black;
+    border-radius: min(1vw, 1vh);
+    padding-inline: 0.5em;
+    transition: 300ms;
+    cursor: pointer;
+    width: 30vw;
+    max-height: calc(7*min(1vw, 1vh));
+    font-family: "Jacquard 24", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+input:focus
+{
+    outline: none;
+    background-color: var(--lightorange);
+}
+
+.nickname-container,
+.stats-container
+{
+    margin-top: 5vh;
+    display: flex;
+    justify-content: center;
+    width: 100vw;
+    gap: 2vw;
+}
+
+.stats-container
+{
+    margin-top: 3vh;
+    gap: 2vh;
+    flex-direction: column;
+    align-items: center;
+    font-size: calc(3*min(1vh, 1vw));
+}
