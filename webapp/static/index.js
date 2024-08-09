@@ -14,6 +14,7 @@ const gameOverSubheading = document.getElementById( "game-over-subheading" )
 const darken_board = document.getElementById( "darken_board" )
 var isMultiplayer = window.location.href.includes( "/multiplayer" )
 
+
 try
 {
     if ( isMultiplayer )
@@ -31,17 +32,7 @@ try
                 var fen = gameDat[ "game" ][ "board" ];
                 // A lot redundancy here as the same lines are repeated for singleplayer and join game config below,
                 // because I can"t figure out how to force board updates otherwise but I may clean this up with promises later
-                const config = {
-                    draggable: true,
-                    position: fen,
-                    onDragStart: onDragStart,
-                    onDrop: onDrop,
-                    onSnapEnd: onSnapEnd,
-                    onMouseoutSquare: onMouseoutSquare,
-                    onMouseoverSquare: onMouseoverSquare,
-                }
-
-                board = Chessboard( "myBoard", config )
+                initializeBoard()
 
                 // Update the status display
                 $status.html( data[ "game" ][ "status" ] );
@@ -65,18 +56,7 @@ try
                 var fen = gameDat[ "game" ][ "board" ]
                 console.log( fen )
 
-                // Slight redundancy here as the same lines are repeated for singleplayer config below, but I may clean this up with promises later
-                const config = {
-                    draggable: true,
-                    position: fen,
-                    onDragStart: onDragStart,
-                    onDrop: onDrop,
-                    onSnapEnd: onSnapEnd,
-                    onMouseoutSquare: onMouseoutSquare,
-                    onMouseoverSquare: onMouseoverSquare,
-                }
-
-                board = Chessboard( "myBoard", config )
+                initializeBoard()
 
                 // Update the status display
                 $status.html( data[ "game" ][ "status" ] );
@@ -143,15 +123,15 @@ function onDrop ( source, target )
         removeGreySquares()
         return "snapback"
     }
-    console.log( move )
+    console.log( move ) 
 
     // Note to add temporary move functionality in the future
     // Check if it"s the player"s turn
     if ( isMultiplayer )
     {
         const isPlayerTurn =
-            ( gameDat[ "game" ][ "status" ] == "White to move" && id == gameDat[ "white" ] ) ||
-            ( gameDat[ "game" ][ "status" ] == "Black to move" && id != gameDat[ "white" ] );
+            ( gameDat[ "game" ][ "status" ].includes("White to move") && id == gameDat[ "white" ] ) ||
+            ( gameDat[ "game" ][ "status" ].includes("Black to move") && id != gameDat[ "white" ] );
         if ( !isPlayerTurn )
         {
             document.body.style.cursor = "default";
@@ -164,22 +144,22 @@ function onDrop ( source, target )
 
     document.body.style.cursor = "default";
     removeGreySquares()
+    
     altruism_score = updateAltruismScore( move, game, altruism_score )
-    var altruism_adjustment = altruism_score
-    if ( altruism_score <= -10 )
-    {
-        altruism_adjustment = -10
-    } else if ( altruism_score >= 10 )
-    {
-        altruism_adjustment = 10
-    }
-    altruismLightning.style.left = `calc( 50% - ${ altruism_adjustment } * 3.6 * min( 1vh , 1vw ) )`
+    updateAltruismDisplay(altruism_score)
     updateStatus( altruism_score )
     console.log( altruism_score )
     // TODO: Show exact score upon hovering over lightning
 
     // TODO: The piece of code above should be run at the beginning of a game to initialize the position of the lightning.
     // For now, the score is always 0 so it is redundant, but once the odds system is implemented this should be run at the beginning of every game.
+}
+
+function updateAltruismDisplay(altruism_score) 
+{
+    let adjustment = altruism_score;
+    adjustment = Math.max(-10, Math.min(10, adjustment));
+    altruismLightning.style.left = `calc(50% - ${adjustment * 3.6} * min(1vh , 1vw))`;
 }
 
 // update the board position after the piece snap
@@ -204,51 +184,38 @@ function handleGameOver ( result, loser, altruism_score )
 
     var winner = [ "Black", "White" ][ +( loser === "b" ) ]
 
-    var gameOverMessage = ""
-    switch ( result )
+    const gameOverMessages = {
+        "c": `${winner} wins by checkmate with an altruism score of ${altruism_score.toFixed(2)}.`,
+        "a": `${winner} wins by altruism.`,
+        "dr": `Draw by threefold repetition with an altruism score of ${altruism_score.toFixed(2)}.`,
+        "d50": `Draw by the 50-move rule with an altruism score of ${altruism_score.toFixed(2)}.`,
+        "dim": `Draw by insufficient material with an altruism score of ${altruism_score.toFixed(2)}.`,
+        "ds": `Draw by stalemate with an altruism score of ${altruism_score.toFixed(2)}.`
+    };
+    console.log(gameOverMessages[result])
+    try
     {
-        case "c":
-            gameOverMessage = `${ winner } wins by checkmate with an altruism score of ${ altruism_score.toFixed( 2 ) }.`
-            break
-        case "a":
-            gameOverMessage = `${ winner } wins by altruism.`
-            break
-        case "dr":
-            gameOverMessage = `Draw by threefold repetition with an altruism score of ${ altruism_score.toFixed( 2 ) }.`
-            break
-        case "d50":
-            gameOverMessage = `Draw by the 50-move rule with an altruism score of ${ altruism_score.toFixed( 2 ) }.`
-            break
-        case "dim":
-            gameOverMessage = `Draw by insufficient material with an altruism score of ${ altruism_score.toFixed( 2 ) }.`
-            break
-        case "ds":
-            gameOverMessage = `Draw by stalemate with an altruism score of ${ altruism_score.toFixed( 2 ) }.`
-            break
-    }
-    gameOverSubheading.innerHTML = gameOverMessage
+        gameOverSubheading.innerHTML = gameOverMessages[result]
+
     darken_board.style.display = "block";
     setTimeout( () =>
     {
         darken_board.style.opacity = 1;
     }, 10 );
+    }
+    catch { console.error("gameOverSubheading element not found in the DOM.")}
     // TODO: Update player ratings here
 }
-function updateStatus ( altruism_score )
-{
-    let status = ""
 
-    let moveColor = "White"
-    if ( game.turn() === "b" )
-    {
-        moveColor = "Black"
-    }
+function getStatusMessage(altruism_score) 
+{
+    var status = ""
+    let moveColor = ( game.turn() === "b" ) ? "Black" : "White";
 
     // checkmate?
     if ( game.in_checkmate() )
     {
-
-        status = "Game over, " + moveColor + " is in checkmate."
+        status = `Game over, ${moveColor} is in checkmate.`;
         handleGameOver( "c", game.turn(), altruism_score )
     }
 
@@ -303,12 +270,20 @@ function updateStatus ( altruism_score )
             status += ", " + moveColor + " is in check"
         }
     }
+    return status
+}
+
+
+function updateStatus ( altruism_score )
+{
+    let status = getStatusMessage(altruism_score)
+
     $status.html( status )
     $fen.html( game.fen() )
     $pgn.html( game.pgn() )
     if ( isMultiplayer )
     {
-        socket.emit( "make_move", { status: status, board: game.fen() }, room = roomName )
+        socket.emit( "make_move", { status: status, board: game.fen() }, roomName)
         console.log( status, game.pgn() )
     }
 }
@@ -362,7 +337,7 @@ function onMouseoutSquare ( square, piece )
     document.body.style.cursor = "default";
 }
 
-const config = {
+/*const config = {
     draggable: true,
     position: isMultiplayer && ( gameDat && gameDat[ "game" ] ) ? gameDat[ "game" ][ "board" ] : "start",
     orientation: gameDat[ "white" ] == id ? "white" : "black",
@@ -375,7 +350,28 @@ const config = {
 
 board = Chessboard( "myBoard", config )
 
-updateStatus()
+updateStatus()*/
+
+initializeBoard()
+
+function initializeBoard() {
+    const config = getConfig(gameDat?.game?.board || "start", gameDat?.white == id ? "white" : "black");
+    board = Chessboard("myBoard", config);
+    updateStatus();
+}
+
+function getConfig(position, orientation) {
+    return {
+        draggable: true,
+        position: position,
+        orientation: orientation,
+        onDragStart: onDragStart,
+        onDrop: onDrop,
+        onSnapEnd: onSnapEnd,
+        onMouseoutSquare: onMouseoutSquare,
+        onMouseoverSquare: onMouseoverSquare,
+    };
+}
 
 //Help Button and modal
 const helpButton = document.getElementById( "help_btn" );

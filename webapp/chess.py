@@ -121,8 +121,8 @@ def handle_move(data, room):
     if not match['gameStarted']:
         return
     # Ensures the right player is moving 
-    if ((match['game']['status'] == 'White to move' and user_id == match['white']) or 
-        (match['game']['status'] == 'Black to move' and user_id != match['white'])):
+    if (( 'White to move' in match['game']['status'] and user_id == match['white']) or 
+        ('Black to move' in match['game']['status'] and user_id != match['white'])):
         # Update board on server
         match['game'] = {'status': status, 'board': board}
         print(data, match)
